@@ -14,8 +14,6 @@ import {
 
 interface IRepoData {
   username: string;
-  name: string;
-  avatarUrl: string;
   reponame: string;
   description?: string;
   stars: number;
@@ -26,8 +24,6 @@ function Repo() {
   const [data, setData] = useState<IRepoData>({} as IRepoData);
   const {
     username,
-    name,
-    avatarUrl,
     reponame,
     description,
     stars,
@@ -35,9 +31,7 @@ function Repo() {
   } = data;
   useEffect(() => {
     setData({
-      name: 'Flávio Miyaji',
       username: 'FlavioMiyaji',
-      avatarUrl: '',
       reponame: 'FlavioMiyaji',
       description: 'Contains all my personal informations.',
       stars: 8,
@@ -50,13 +44,13 @@ function Repo() {
         {!!username && (
           <>
             <RepoIcon />
-            <Link to={username} className="username">
+            <Link to={`/${username}`} className="username">
               {username}
             </Link>
             {!!reponame && (
               <>
                 <span>/</span>
-                <Link to={`${username}/${reponame}`} className="reponame">
+                <Link to={`/${reponame}`} className="reponame">
                   {reponame}
                 </Link>
               </>
