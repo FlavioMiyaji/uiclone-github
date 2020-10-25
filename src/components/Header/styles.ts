@@ -1,4 +1,3 @@
-import { fromUnixTime } from 'date-fns';
 import styled from 'styled-components';
 import { FaGithub } from 'react-icons/fa';
 
@@ -14,6 +13,10 @@ export const GithubLogo = styled(FaGithub)`
   width: 32px;
   height: 32px;
   flex-shrink: 0;
+  cursor: pointer;
+  &:hover{
+    opacity: 0.8;
+  }
 `;
 
 export const SearchForm = styled.form`
