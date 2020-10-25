@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
 import ProfileData from '../../components/ProfileData';
+import RepoCard from '../../components/RepoCard';
 
 import {
   Container,
   Main,
   LeftSide,
   RightSide,
+  Repos,
 } from './styles';
 
 interface IProfileData {
@@ -66,7 +68,24 @@ const Profile: React.FC = () => {
             blog={blog}
           />
         </LeftSide>
-        <RightSide></RightSide>
+        <RightSide>
+          <Repos>
+            <h2>Random repos</h2>
+            <div>
+              {[1, 2, 3, 4, 5, 6].map(n => (
+                <RepoCard
+                  key={n}
+                  username={'FlavioMiyaji'}
+                  reponame={'FlavioMiyaji'}
+                  description={'Contains all my personal informations.'}
+                  laguage={'README.md'}
+                  stars={n}
+                  forks={2}
+                />
+              ))}
+            </div>
+          </Repos>
+        </RightSide>
       </Main>
     </Container>
   );
