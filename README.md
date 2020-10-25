@@ -1,6 +1,18 @@
 # GIT Hub - UI Clone
 This is a UI Clone of the GITHub for studying purposes
 
+- [x] Iniciando o projeto
+- [x] Apresentação do projeto
+- [x] Criação das rotas
+- [x] Header
+- [x] Página Profile
+- [x] Página Repo
+- [x] Fetch API
+- [x] Navegação do Header
+- [x] Footer
+- [x] Dark mode (tema escuro)
+- [ ] Desafios e conclusão
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
