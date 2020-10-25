@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+
+import { APIUser, APIRepo } from '../../@types';
 
 import {
   Container,
@@ -13,31 +15,44 @@ import {
 } from './styles';
 
 interface IRepoData {
-  username: string;
-  reponame: string;
-  description?: string;
-  stars: number;
-  forks: number;
+  user?: APIUser;
+  repo?: APIRepo;
+  error?: string;
 }
 
 function Repo() {
+  const { username = 'FlavioMiyaji', reponame = 'FlavioMiyaji' } = useParams();
   const [data, setData] = useState<IRepoData>({} as IRepoData);
-  const {
-    username,
-    reponame,
-    description,
-    stars,
-    forks,
-  } = data;
   useEffect(() => {
-    setData({
-      username: 'FlavioMiyaji',
-      reponame: 'FlavioMiyaji',
-      description: 'Contains all my personal informations.',
-      stars: 8,
-      forks: 2,
-    });
-  }, []);
+    const loadProfile = async () => {
+      const loadData = async () => {
+        const responses = await Promise.all([
+          fetch(`http://api.github.com/users/${username}`),
+          fetch(`http://api.github.com/users/${username}/repos`),
+        ]);
+        const [userResponse, reposResponse] = responses;
+        if (userResponse.status === 404) {
+          setData({ error: 'User not found!' });
+          return;
+        }
+        const user: APIUser = await userResponse.json();
+        const repos: APIRepo[] = await reposResponse.json();
+
+        const repo = repos.find(repo => repo.name === reponame);
+
+        setData({ user, repo });
+      };
+      loadData();
+    }
+    loadProfile();
+  }, [username, reponame]);
+  const { user, repo, error } = data;
+  if (error) {
+    return <h1>{error}</h1>;
+  }
+  if (!user || !repo) {
+    return <h1>Carregando...</h1>;
+  }
   return (
     <Container>
       <Breadcrumb>
@@ -58,16 +73,16 @@ function Repo() {
           </>
         )}
       </Breadcrumb>
-      {description && (<p>{description}</p>)}
+      {repo.description && (<p>{repo.description}</p>)}
       <Stats>
         <li>
           <StarIcon />
-          <b>{stars}</b>
+          {/* <b>{repo.stars}</b> */}
           <span>stars</span>
         </li>
         <li>
           <ForkIcon />
-          <b>{forks}</b>
+          <b>{repo.forks}</b>
           <span>forks</span>
         </li>
       </Stats>

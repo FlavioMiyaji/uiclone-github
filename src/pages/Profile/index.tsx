@@ -4,6 +4,8 @@ import ProfileData from '../../components/ProfileData';
 import RepoCard from '../../components/RepoCard';
 import RandomCalendar from '../../components/RandomCalendar';
 
+import { APIUser, APIRepo } from '../../@types';
+
 import {
   Container,
   Main,
@@ -14,53 +16,53 @@ import {
   Tab,
   RepoIcon,
 } from './styles';
+import { useParams } from 'react-router-dom';
 
 interface IProfileData {
-  username: string;
-  name: string;
-  avatarUrl: string;
-  followers: number;
-  following: number;
-  company: string;
-  location: string;
-  email: string;
-  blog: string;
+  user?: APIUser;
+  repos?: APIRepo[];
+  error?: string;
 }
 
 const Profile: React.FC = () => {
+  const { username = 'FlavioMiyaji' } = useParams();
   const [data, setData] = useState<IProfileData>({} as IProfileData);
-  const {
-    username,
-    name,
-    avatarUrl,
-    followers,
-    following,
-    company,
-    location,
-    email,
-    blog,
-  } = data;
   useEffect(() => {
     const loadProfile = async () => {
-      setData({
-        name: 'Flávio Miyaji',
-        username: 'FlavioMiyaji',
-        avatarUrl: '',
-        company: 'SHX Informática LTDA',
-        followers: 10,
-        following: 50,
-        location: 'São Paulo, Brasil',
-        email: 'yoshizo.miyaji@gmail.com',
-        blog: 'flavio.miyaji.com',
-      });
+      const loadData = async () => {
+        const responses = await Promise.all([
+          fetch(`http://api.github.com/users/${username}`),
+          fetch(`http://api.github.com/users/${username}/repos`),
+        ]);
+        const [userResponse, reposResponse] = responses;
+        if (userResponse.status === 404) {
+          setData({ error: 'User not found!' });
+          return;
+        }
+        const user: APIUser = await userResponse.json();
+        const repos: APIRepo[] = await reposResponse.json();
+
+        const shuffledRepos = repos.sort(() => 0.5 - Math.random());
+        const sliceRepos = shuffledRepos.slice(0, 6);
+
+        setData({ user, repos: sliceRepos });
+      };
+      loadData();
     }
     loadProfile();
-  }, []);
+  }, [username]);
+  const { user, repos, error } = data;
+  if (error) {
+    return <h1>{error}</h1>;
+  }
+  if (!user || !repos) {
+    return <h1>Carregando...</h1>;
+  }
   const TabContent = () => (
     <div className="content">
       <RepoIcon />
       <span className="label">Repositories</span>
-      <span className="number">26</span>
+      {!!repos && (<span className="number">{user.public_repos}</span>)}
     </div>
   );
   return (
@@ -75,15 +77,15 @@ const Profile: React.FC = () => {
       <Main>
         <LeftSide>
           <ProfileData
-            username={username}
-            name={name}
-            avatarUrl={avatarUrl}
-            followers={followers}
-            following={following}
-            company={company}
-            location={location}
-            email={email}
-            blog={blog}
+            username={user.login}
+            name={user.name}
+            avatarUrl={user.avatar_url}
+            followers={user.followers}
+            following={user.following}
+            company={user.company}
+            location={user.location}
+            email={user.email}
+            blog={user.blog}
           />
         </LeftSide>
         <RightSide>
@@ -91,22 +93,24 @@ const Profile: React.FC = () => {
             <TabContent />
             <span className="line" />
           </Tab>
-          <Repos>
-            <h2>Random repos</h2>
-            <div>
-              {[1, 2, 3, 4, 5, 6].map(n => (
-                <RepoCard
-                  key={n}
-                  username={'FlavioMiyaji'}
-                  reponame={'FlavioMiyaji'}
-                  description={'Contains all my personal informations.'}
-                  laguage={'README.md'}
-                  stars={n}
-                  forks={2}
-                />
-              ))}
-            </div>
-          </Repos>
+          {!!repos && (
+            <Repos>
+              <h2>Random repos</h2>
+              <div>
+                {repos?.map(repo => (
+                  <RepoCard
+                    key={repo.name}
+                    username={user.login}
+                    reponame={repo.name}
+                    description={repo.description}
+                    laguage={repo.language}
+                    stars={0}
+                    forks={repo.forks}
+                  />
+                ))}
+              </div>
+            </Repos>
+          )}
           <CalendarHeading>
             Random calendar (do not represent actual data)
           </CalendarHeading>
