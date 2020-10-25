@@ -34,7 +34,7 @@ const RepoCard: React.FC<IProps> = (props: IProps) => {
       <Topside>
         <header>
           <RepoIcon />
-          <Link to={`/${username}/${reponame}`}>{reponame}</Link>
+          <Link to={`${username}/${reponame}`}>{reponame}</Link>
         </header>
         <p>{description}</p>
       </Topside>
