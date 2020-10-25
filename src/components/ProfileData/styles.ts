@@ -43,6 +43,7 @@ export const Avatar = styled.img`
   border-radius: 50%;
   @media (min-width: 768px) {
     width: 100%;
+    margin-top: -34px;
   }
 `;
 
