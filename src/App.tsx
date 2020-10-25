@@ -1,3 +1,5 @@
+import 'react-calendar-heatmap/dist/styles.css';
+
 import React from 'react';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
